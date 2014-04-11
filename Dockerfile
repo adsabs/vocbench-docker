@@ -25,7 +25,7 @@ RUN wget https://bitbucket.org/art-uniroma2/vocbench/downloads/VOCBENCH_2.0.1-SN
 RUN mkdir /vobench && unzip /VOCBENCH_2.0.1-SNAPSHOT_2013-11-27.zip -d /vobench/
 RUN unzip /vobench/st-server.zip -d /vobench/
 RUN dos2unix /vobench/st-server/server_run.sh
-RUN ln -s /vobench/vocbench-2.0.1.war /var/lib/tomcat7/webapps/
+RUN cp /vobench/vocbench-2.0.1.war /var/lib/tomcat7/webapps/vocbench#vocbench-2.0.1.war
 
 	#Setup mysql admin
 RUN service mysql start && mysql -u $U -p$P < /vobench/administrator20.sql
