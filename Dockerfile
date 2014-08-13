@@ -1,6 +1,6 @@
 FROM debian
 
-	#Install deps
+#Install deps
 RUN apt-get update && apt-get install -y fakeroot locales
 RUN apt-get install -y openjdk-7-jdk tomcat7 libmysql-java wget unzip nano cron rsync
 RUN apt-get install -y supervisor
