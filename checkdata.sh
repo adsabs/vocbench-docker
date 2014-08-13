@@ -3,6 +3,7 @@
 MYSQL_DATADIR="/data/"
 ST_DATADIR="/st-server/"
 
+service tomcat7 restart
 if [ ! "$(ls -A $MYSQL_DATADIR)" ]; then
   rsync -a /var/lib/mysql/* $MYSQL_DATADIR
   touch $MYSQL_DATADIR.initialized_by_checkdata_sh
