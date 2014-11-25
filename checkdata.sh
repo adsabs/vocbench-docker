@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MYSQL_DATADIR="/data/"
-ST_DATADIR="/st-server/"
+ST_DATADIR="/vocbench/st-server/semanticturkey-0.10.1/bin"
 
 service tomcat7 restart
 if [ ! "$(ls -A $MYSQL_DATADIR)" ]; then
@@ -11,11 +11,6 @@ if [ ! "$(ls -A $MYSQL_DATADIR)" ]; then
 fi
 service mysql restart
 
-if [ ! "$(ls -A $ST_DATADIR)" ]; then
-  rsync -a /vocbench/st-server/* $ST_DATADIR
-  touch $ST_DATADIR.initialized_by_checkdata_sh
-fi
-
 pushd $ST_DATADIR
-bash server_run.sh
+bash start
 popd

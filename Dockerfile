@@ -21,11 +21,12 @@ RUN apt-get install -y mysql-server
 RUN fakeroot apt-get install -y openjdk-7-jdk
 
 #Download+extract vobench
-RUN wget https://bitbucket.org/art-uniroma2/vocbench/downloads/VOCBENCH_2.1.zip
-RUN mkdir /vocbench && unzip /VOCBENCH_2.1.zip -d /vocbench/
-RUN unzip /vocbench/st-server.zip -d /vocbench/
-RUN dos2unix /vocbench/st-server/server_run.sh
-RUN cp /vocbench/vocbench.war /var/lib/tomcat7/webapps/vocbench.war
+RUN wget https://bitbucket.org/art-uniroma2/vocbench/downloads/VOCBENCH_2.2.1.zip -O VOCBENCH.zip
+RUN mkdir /vocbench && unzip /VOCBENCH.zip -d /vocbench/
+
+#This unzip is broken (archive is broken); we have to explicitly ignore exit 1
+RUN unzip -qo /vocbench/semanticturkey-0.10.1+vbbundle-2.2.1.zip -d /vocbench/st-server/; exit 0
+RUN cp /vocbench/vocbench-2.2.1.war /var/lib/tomcat7/webapps/vocbench.war
 
 #Setup backup
 ADD checkdata.sh /checkdata.sh
