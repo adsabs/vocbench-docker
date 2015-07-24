@@ -18,6 +18,7 @@ ENV P none
 RUN wget https://bitbucket.org/art-uniroma2/vocbench/downloads/VOCBENCH_2.3.zip -O VOCBENCH.zip
 RUN mkdir /vocbench && unzip /VOCBENCH.zip -d /vocbench/
 RUN unzip -qo /vocbench/semanticturkey-0.11+vb-bundle-2.3.zip -d /vocbench/st-server/
+RUN chmod u+x /vocbench/st-server/semanticturkey-0.11/bin/karaf
 RUN cp /vocbench/vocbench-2.3.war /var/lib/tomcat7/webapps/vocbench.war
 
 # Add configuration and run scripts
