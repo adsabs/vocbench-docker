@@ -35,6 +35,10 @@ COPY my.cnf /etc/mysql/my.cnf
 COPY tomcat.sh /etc/service/tomcat/run
 COPY mysql.sh /etc/service/mysql/run
 COPY st_server.sh /etc/service/st_server/run
+COPY tomcat-users.xml /var/lib/tomcat7/conf/tomcat-users.xml
+COPY web.xml /var/lib/tomcat7/webapps/openrdf-sesame/WEB-INF/web.xml
+RUN chown -R tomcat7:tomcat7 /var/lib/tomcat7
+
 
 EXPOSE 8080
 
