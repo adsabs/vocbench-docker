@@ -21,6 +21,15 @@ RUN unzip -qo /vocbench/semanticturkey-0.11+vb-bundle-2.3.zip -d /vocbench/st-se
 RUN chmod u+x /vocbench/st-server/semanticturkey-0.11/bin/karaf
 RUN cp /vocbench/vocbench-2.3.war /var/lib/tomcat7/webapps/vocbench.war
 
+#Download and extract open-sesame
+RUN mkdir /sesame
+RUN wget -O /sesame/sesame-2.7.13.tar.gz http://sourceforge.net/projects/sesame/files/Sesame%202/2.7.13/openrdf-sesame-2.7.13-sdk.tar.gz/download
+RUN cd /sesame && tar -xvf /sesame/sesame-2.7.13.tar.gz
+RUN cp -r /sesame/openrdf-sesame-2.7.13/war/*war /var/lib/tomcat7/webapps/
+RUN mkdir /var/lib/tomcat7/webapps/openrdf-sesame/
+RUN cd /var/lib/tomcat7/webapps/openrdf-sesame/ && jar xf ../openrdf-sesame.war
+RUN mkdir -p /usr/share/tomcat7/.aduna/logs/
+
 # Add configuration and run scripts
 COPY my.cnf /etc/mysql/my.cnf
 COPY tomcat.sh /etc/service/tomcat/run
