@@ -20,6 +20,7 @@ RUN mkdir /vocbench && unzip /VOCBENCH.zip -d /vocbench/
 RUN unzip -qo /vocbench/semanticturkey-0.11+vb-bundle-2.3.zip -d /vocbench/st-server/
 RUN chmod u+x /vocbench/st-server/semanticturkey-0.11/bin/karaf
 RUN cp /vocbench/vocbench-2.3.war /var/lib/tomcat7/webapps/vocbench.war
+RUN mkdir /var/lib/tomcat7/temp && chown -R tomcat7:tomcat7 /var/lib/tomcat7/temp
 
 #Download and extract open-sesame
 RUN mkdir /sesame
