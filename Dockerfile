@@ -32,6 +32,9 @@ RUN cd /var/lib/tomcat7/webapps/openrdf-sesame/ && jar xf ../openrdf-sesame.war
 RUN mkdir -p /usr/share/tomcat7/.aduna/logs/
 
 # Add configuration and run scripts
+ENV CATALINA_HOME /usr/share/tomcat7
+ENV CATALINA_BASE /var/lib/tomcat7
+ENV SESAME_DATADIR /usr/share/tomcat7/.aduna/
 COPY my.cnf /etc/mysql/my.cnf
 COPY tomcat.sh /etc/service/tomcat/run
 COPY mysql.sh /etc/service/mysql/run
