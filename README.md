@@ -3,6 +3,18 @@ Dockerfile for running vobench as per https://aims-fao.atlassian.net/wiki/displa
 Usage:
 
 1. `docker build -t adsabs/vocbench .`
-1. `docker run -d --name vocbench -p 8080:8080 -v $PWD/vols/data:/data/:rw -v $PWD/vols/st-server:/vocbench/st-server/semanticturkey-0.11/SemanticTurkeyData/:rw -v $PWD/vols/aduna/:/usr/share/tomcat7/.aduna/openrdf-sesame/repositories adsabs/vocbench`
+1. `docker run -d --name vocbench -p 8080:8080 -v $PWD/vols/data:/data/:rw -v $PWD/vols/SemanticTurkeyData:/vocbench/st-server/SemanticTurkeyData:rw -v $PWD/vols/aduna/:/usr/share/tomcat7/.aduna/openrdf-sesame/repositories adsabs/vocbench`
 
 To start|stop: `sudo docker start|stop vocbench`
+
+Notes:
+This is a fat container; all dependencies and databases run inside of it. This includes:
+
+  - mysql
+  - aduna/openrdf
+  - Semantic Turkey
+  - vocbench
+
+This is great for small installations, but clearly offers no failover or scaleability. Caveat emptor.
+
+Data should be persisted using host mounted volumes.
