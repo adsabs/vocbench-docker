@@ -1,4 +1,5 @@
-Dockerfile for running vobench as per https://aims-fao.atlassian.net/wiki/display/VB/Installation
+Dockerfile for running vobench using https://aims-fao.atlassian.net/wiki/display/VB/Installation as a guideline.
+Edit `tomcat-users.xml`, `Dockerfile`, and `config.properties` to contain the correct passwords (Yes, this software wants everything in plain text :| )
 
 Usage:
 

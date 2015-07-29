@@ -21,6 +21,10 @@ RUN unzip -qo /vocbench/semanticturkey-0.11+vb-bundle-2.3.zip -d /vocbench/st-se
 RUN chmod u+x /vocbench/st-server/semanticturkey-0.11/bin/karaf
 RUN cp /vocbench/vocbench-2.3.war /var/lib/tomcat7/webapps/vocbench.war
 RUN mkdir /var/lib/tomcat7/temp && chown -R tomcat7:tomcat7 /var/lib/tomcat7/temp
+RUN wget https://bitbucket.org/art-uniroma2/vocbench/downloads/vb2.3_validation_patch.zip
+RUN unzip -qo vb2.3_validation_patch.zip -d /validation_patch
+RUN mv /validation_patch/vb*/* /validation_patch   # Workaround for spaces in the path
+COPY config.properties /validation_patch/config.properties
 
 #Download and extract open-sesame
 RUN mkdir /sesame
