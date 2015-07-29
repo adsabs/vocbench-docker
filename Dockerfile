@@ -1,42 +1,54 @@
-FROM debian
+FROM phusion/baseimage
 
-#Install deps
-RUN apt-get update && apt-get install -y fakeroot locales
-RUN apt-get install -y openjdk-7-jdk tomcat7 libmysql-java wget unzip nano cron rsync
-RUN apt-get install -y supervisor
+# Install deps
+RUN apt-get update
+RUN apt-get install -y openjdk-7-jdk tomcat7 libmysql-java wget unzip locales rsync
 
-#run_server.sh has DOS line endings that make it unusuable
-RUN apt-get install -y dos2unix
-
+# Install and setup mysql
 ENV LC_ALL C.UTF-8
 ENV U root
 ENV P fakepassword
-
 RUN echo "mysql-server mysql-server/root_password password $P" | debconf-set-selections
 RUN echo "mysql-server mysql-server/root_password_again password $P" | debconf-set-selections
 RUN apt-get install -y mysql-server
-
-#Java needs access to host's /dev/fuse in a postinit script.
-#Must use fakeroot if we don't want to give container access to hosts /dev/
-RUN fakeroot apt-get install -y openjdk-7-jdk
-
-#Download+extract vobench
-RUN wget https://bitbucket.org/art-uniroma2/vocbench/downloads/VOCBENCH_2.2.1.zip -O VOCBENCH.zip
-RUN mkdir /vocbench && unzip /VOCBENCH.zip -d /vocbench/
-
-#This unzip is broken (archive is broken); we have to explicitly ignore exit 1
-RUN unzip -qo /vocbench/semanticturkey-0.10.1+vbbundle-2.2.1.zip -d /vocbench/st-server/; exit 0
-RUN cp /vocbench/vocbench-2.2.1.war /var/lib/tomcat7/webapps/vocbench.war
-
-#Setup backup
-ADD checkdata.sh /checkdata.sh
-
 ENV U none
 ENV P none
+
+# Download and extract vobench
+RUN wget https://bitbucket.org/art-uniroma2/vocbench/downloads/VOCBENCH_2.3.zip -O VOCBENCH.zip
+RUN mkdir /vocbench && unzip /VOCBENCH.zip -d /vocbench/
+RUN unzip -qo /vocbench/semanticturkey-0.11+vb-bundle-2.3.zip -d /vocbench/st-server/
+RUN chmod u+x /vocbench/st-server/semanticturkey-0.11/bin/karaf
+RUN cp /vocbench/vocbench-2.3.war /var/lib/tomcat7/webapps/vocbench.war
+RUN mkdir /var/lib/tomcat7/temp && chown -R tomcat7:tomcat7 /var/lib/tomcat7/temp
+RUN wget https://bitbucket.org/art-uniroma2/vocbench/downloads/vb2.3_validation_patch.zip
+RUN unzip -qo vb2.3_validation_patch.zip -d /validation_patch
+RUN mv /validation_patch/vb*/* /validation_patch   # Workaround for spaces in the path
+COPY config.properties /validation_patch/config.properties
+
+#Download and extract open-sesame
+RUN mkdir /sesame
+RUN wget -O /sesame/sesame-2.7.13.tar.gz http://sourceforge.net/projects/sesame/files/Sesame%202/2.7.13/openrdf-sesame-2.7.13-sdk.tar.gz/download
+RUN cd /sesame && tar -xvf /sesame/sesame-2.7.13.tar.gz
+RUN cp -r /sesame/openrdf-sesame-2.7.13/war/*war /var/lib/tomcat7/webapps/
+RUN mkdir /var/lib/tomcat7/webapps/openrdf-sesame/
+RUN cd /var/lib/tomcat7/webapps/openrdf-sesame/ && jar xf ../openrdf-sesame.war
+RUN mkdir -p /usr/share/tomcat7/.aduna/logs/
+
+# Add configuration and run scripts
+ENV CATALINA_HOME /usr/share/tomcat7
+ENV CATALINA_BASE /var/lib/tomcat7
+ENV SESAME_DATADIR /usr/share/tomcat7/.aduna/
+COPY my.cnf /etc/mysql/my.cnf
+COPY tomcat.sh /etc/service/tomcat/run
+COPY mysql.sh /etc/service/mysql/run
+COPY st_server.sh /etc/service/st_server/run
+COPY tomcat-users.xml /var/lib/tomcat7/conf/tomcat-users.xml
+COPY web.xml /var/lib/tomcat7/webapps/openrdf-sesame/WEB-INF/web.xml
+RUN chown -R tomcat7:tomcat7 /var/lib/tomcat7
+
 
 EXPOSE 8080
 
 #Supervisord will take care of keeping services up
-ADD supervisord.conf /etc/supervisor/supervisord.conf
-ADD my.cnf /etc/mysql/my.cnf
-CMD ["/usr/bin/supervisord"]
+CMD ["/sbin/my_init"]
